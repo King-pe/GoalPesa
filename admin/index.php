@@ -6,7 +6,22 @@ $data = read_json();
 $user = current_user($data);
 if (!$user || !is_admin($user)) { header('Location: /login.php?redirect=/admin/index.php'); exit; }
 
+// Stats overview
+$users = $data['users'] ?? [];
 $items = array_values(array_filter($data['payouts'] ?? [], function($p){ return ($p['kind'] ?? 'deposit') === 'deposit'; }));
+$pendingCount = 0;
+$approvedCount = 0;
+$rejectedCount = 0;
+$approvedSum = 0.0;
+foreach ($items as $d) {
+  $status = $d['status'] ?? 'pending';
+  if ($status === 'approved') { $approvedCount++; $approvedSum += (float)$d['amount']; }
+  elseif ($status === 'rejected') { $rejectedCount++; }
+  else { $pendingCount++; }
+}
+$totalUsers = count($users);
+$totalBalance = 0.0;
+foreach ($users as $u) { $totalBalance += (float)($u['jumla_uwekezaji'] ?? 0); }
 ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -28,6 +43,12 @@ $items = array_values(array_filter($data['payouts'] ?? [], function($p){ return 
   </nav>
 </header>
 <main class="dashboard">
+  <div class="card">
+    <h2>Muhtasari</h2>
+    <p><strong>Users wote:</strong> <?= (int)$totalUsers ?> | <strong>Salio zote:</strong> <?= number_format($totalBalance) ?> TZS</p>
+    <p><strong>Deposits Pending:</strong> <?= (int)$pendingCount ?> | <strong>Approved:</strong> <?= (int)$approvedCount ?> | <strong>Rejected:</strong> <?= (int)$rejectedCount ?> | <strong>Approved Amount:</strong> <?= number_format($approvedSum) ?> TZS</p>
+    <p><a class="btn" href="/admin/posts.php">Dhibiti Makala/Posts</a></p>
+  </div>
   <div class="card">
     <h2>Muamala: Deposits</h2>
     <?php if (!$items): ?>
