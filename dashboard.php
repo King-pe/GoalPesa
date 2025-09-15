@@ -1,4 +1,96 @@
 <?php
+require __DIR__ . '/config/functions.php';
+gp_require_login();
+$user = gp_current_user();
+$deposits = gp_user_deposits($user['id']);
+$withdrawals = gp_user_withdrawals($user['id']);
+?>
+<!doctype html>
+<html lang="sw">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Dashibodi - GoalPesa</title>
+    <link rel="stylesheet" href="/assets/css/style.css">
+  </head>
+  <body>
+    <header>
+      <div class="container nav">
+        <div class="brand">
+          <span style="width:10px;height:10px;border-radius:999px;background:#22c55e;display:inline-block"></span>
+          <span>GoalPesa</span>
+          <span class="pill">Dashboard</span>
+        </div>
+        <div>
+          <a class="btn" href="/">Nyumbani</a>
+          <a class="btn" href="/logout.php">Toka</a>
+        </div>
+      </div>
+    </header>
+    <main class="container" style="padding:24px 0">
+      <div class="grid two-col">
+        <section class="card">
+          <h2>Habari, <?= gp_sanitize($user['jina']) ?></h2>
+          <p class="muted">Salio lako la sasa</p>
+          <div class="row">
+            <div class="card" style="flex:1">
+              <div class="muted">Balance</div>
+              <div style="font-size:1.8rem;">KES <?= number_format((float)$user['balance'], 2) ?></div>
+            </div>
+            <div class="card" style="flex:1">
+              <div class="muted">Uwekeji wa kwanza</div>
+              <div style="font-size:1.2rem;">KES <?= number_format((float)$user['initialDeposit'], 2) ?></div>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px">
+            <a class="btn primary" href="/deposit.php">Weka fedha</a>
+            <a class="btn" href="/payout.php">Toa fedha</a>
+          </div>
+        </section>
+        <section class="card">
+          <h3>Muhtasari</h3>
+          <ul>
+            <li>Makato ya kutoa: 6% kawaida, 2% salio ≥ 3× initial</li>
+            <li>Baada ya kutoa, salio linawekwa kuwa 0</li>
+          </ul>
+        </section>
+      </div>
+
+      <div class="grid" style="grid-template-columns:1fr 1fr;margin-top:16px">
+        <section class="card">
+          <h3>Deposits</h3>
+          <table>
+            <thead><tr><th>Tarehe</th><th>Kiasi</th></tr></thead>
+            <tbody>
+              <?php foreach ($deposits as $d): ?>
+                <tr><td><?= gp_sanitize($d['date']) ?></td><td>KES <?= number_format((float)$d['amount'], 2) ?></td></tr>
+              <?php endforeach; ?>
+              <?php if (empty($deposits)): ?><tr><td colspan="2" class="muted">Hakuna data</td></tr><?php endif; ?>
+            </tbody>
+          </table>
+        </section>
+        <section class="card">
+          <h3>Withdrawals</h3>
+          <table>
+            <thead><tr><th>Tarehe</th><th>Kiasi</th><th>Makato</th><th>Baada</th></tr></thead>
+            <tbody>
+              <?php foreach ($withdrawals as $w): ?>
+                <tr>
+                  <td><?= gp_sanitize($w['date']) ?></td>
+                  <td>KES <?= number_format((float)$w['amount'], 2) ?></td>
+                  <td>KES <?= number_format((float)$w['fee'], 2) ?></td>
+                  <td>KES <?= number_format((float)$w['after'], 2) ?></td>
+                </tr>
+              <?php endforeach; ?>
+              <?php if (empty($withdrawals)): ?><tr><td colspan="4" class="muted">Hakuna data</td></tr><?php endif; ?>
+            </tbody>
+          </table>
+        </section>
+      </div>
+    </main>
+  </body>
+  </html>
+<?php
 session_start();
 require_once __DIR__ . '/config/functions.php';
 
