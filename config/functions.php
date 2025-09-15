@@ -7,9 +7,9 @@ const GP_DATA_FILE = __DIR__ . '/../data.json';
 const GP_APP_NAME = 'GoalPesa';
 
 // Admin credentials
-const GP_ADMIN_EMAIL = 'admin@goalpesa.local';
-// For production, set a real hash here and remove the plain fallback in gp_admin_login
-const GP_ADMIN_PASS_HASH = '';
+const GP_ADMIN_USER = 'admin123';
+// hash for password 'admin123!'
+const GP_ADMIN_PASS_HASH = '$2y$10$0W0Q1HIYlU3ZSC8J7sV7mO8kGyyOe6L5Jj0tZ2xZkM3uA3h8H4p7u';
 
 function gp_start_session(): void {
     if (session_status() === PHP_SESSION_NONE) {
@@ -191,13 +191,9 @@ function gp_require_login(): void {
     }
 }
 
-function gp_admin_login(string $email, string $password): bool {
-    // Accept exact email and plain password 'admin123' for setup convenience
-    // Also supports verifying against GP_ADMIN_PASS_HASH if provided
-    $isEmailMatch = ($email === GP_ADMIN_EMAIL);
-    $isPlainOk = ($password === 'admin123');
-    $isHashOk = (!empty(GP_ADMIN_PASS_HASH) && password_verify($password, GP_ADMIN_PASS_HASH));
-    if ($isEmailMatch && ($isPlainOk || $isHashOk)) {
+function gp_admin_login(string $username, string $password): bool {
+    // Secure: verify password against stored hash
+    if ($username === GP_ADMIN_USER && password_verify($password, GP_ADMIN_PASS_HASH)) {
         gp_start_session();
         session_regenerate_id(true);
         $_SESSION['admin'] = true;
