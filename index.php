@@ -15,18 +15,32 @@ $user = gp_current_user();
     <header>
       <div class="container nav">
         <div class="brand">
-          <span style="width:10px;height:10px;border-radius:999px;background:#22c55e;display:inline-block"></span>
+          <img src="/assets/images/logo.png" alt="GoalPesa" height="32">
           <span>GoalPesa</span>
           <span class="pill">Digital Investment</span>
         </div>
-        <div>
-          <?php if ($user): ?>
-            <a class="btn" href="/dashboard.php">Dashibodi</a>
-            <a class="btn" href="/logout.php">Toka</a>
-          <?php else: ?>
-            <a class="btn" href="/login.php">Ingia</a>
-            <a class="btn primary" href="/register.php">Jisajili</a>
-          <?php endif; ?>
+        <div class="menu">
+          <div class="menu-desktop">
+            <?php if ($user): ?>
+              <a class="btn" href="/dashboard.php">Dashibodi</a>
+              <a class="btn" href="/logout.php">Toka</a>
+            <?php else: ?>
+              <a class="btn" href="/login.php">Ingia</a>
+              <a class="btn primary" href="/register.php">Jisajili</a>
+            <?php endif; ?>
+          </div>
+          <div class="dropdown">
+            <button class="hamburger" aria-label="Menu" type="button">☰</button>
+            <div class="dropdown-menu">
+              <?php if ($user): ?>
+                <a href="/dashboard.php">Dashibodi</a>
+                <a href="/logout.php">Toka</a>
+              <?php else: ?>
+                <a href="/login.php">Ingia</a>
+                <a href="/register.php">Jisajili</a>
+              <?php endif; ?>
+            </div>
+          </div>
         </div>
       </div>
     </header>

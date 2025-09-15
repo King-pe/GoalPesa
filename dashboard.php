@@ -17,13 +17,22 @@ $withdrawals = gp_user_withdrawals($user['id']);
     <header>
       <div class="container nav">
         <div class="brand">
-          <span style="width:10px;height:10px;border-radius:999px;background:#22c55e;display:inline-block"></span>
+          <img src="/assets/images/logo.png" alt="GoalPesa" height="32">
           <span>GoalPesa</span>
           <span class="pill">Dashboard</span>
         </div>
-        <div>
-          <a class="btn" href="/">Nyumbani</a>
-          <a class="btn" href="/logout.php">Toka</a>
+        <div class="menu">
+          <div class="menu-desktop">
+            <a class="btn" href="/">Nyumbani</a>
+            <a class="btn" href="/logout.php">Toka</a>
+          </div>
+          <div class="dropdown">
+            <button class="hamburger" aria-label="Menu" type="button">☰</button>
+            <div class="dropdown-menu">
+              <a href="/">Nyumbani</a>
+              <a href="/logout.php">Toka</a>
+            </div>
+          </div>
         </div>
       </div>
     </header>

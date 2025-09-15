@@ -13,3 +13,19 @@
   setInterval(()=>go(idx+1), 4000);
   dots.forEach((d,i)=>d.addEventListener('click', ()=>go(i)));
 })();
+
+// Dropdown
+(() => {
+  const btn = document.querySelector('.hamburger');
+  const menu = document.querySelector('.dropdown-menu');
+  if (!btn || !menu) return;
+  btn.addEventListener('click', () => {
+    const isOpen = menu.style.display === 'block';
+    menu.style.display = isOpen ? 'none' : 'block';
+  });
+  document.addEventListener('click', (e) => {
+    if (!menu.contains(e.target) && !btn.contains(e.target)) {
+      menu.style.display = 'none';
+    }
+  });
+})();
