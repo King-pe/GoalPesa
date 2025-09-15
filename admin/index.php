@@ -6,6 +6,11 @@ $data = read_json();
 $user = current_user($data);
 if (!$user || !is_admin($user)) { header('Location: /login.php?redirect=/admin/index.php'); exit; }
 
+$usersById = [];
+foreach (($data['users'] ?? []) as $u) {
+  $usersById[$u['id']] = $u;
+}
+
 $items = array_values(array_filter($data['payouts'] ?? [], function($p){ return ($p['kind'] ?? 'deposit') === 'deposit'; }));
 ?>
 <!DOCTYPE html>
@@ -35,7 +40,7 @@ $items = array_values(array_filter($data['payouts'] ?? [], function($p){ return 
     <?php else: ?>
       <?php foreach ($items as $p): ?>
         <div class="card" style="margin: 10px 0;">
-          <p><strong>User:</strong> <?= htmlspecialchars($p['user_id']) ?> | <strong>Kiasi:</strong> <?= number_format((float)$p['amount']) ?> | <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?></p>
+          <p><strong>User:</strong> <?= htmlspecialchars($usersById[$p['user_id']]['jina'] ?? $p['user_id']) ?> | <strong>Kiasi:</strong> <?= number_format((float)$p['amount']) ?> | <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?></p>
           <p><strong>Transaction:</strong> <?= htmlspecialchars($p['transaction_no']) ?> | <a target="_blank" href="/<?= htmlspecialchars($p['screenshot']) ?>">Screenshot</a></p>
           <form method="POST" action="/admin/update.php" style="display:inline;">
             <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
