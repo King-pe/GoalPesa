@@ -12,7 +12,6 @@ $makato = (float)($currentUser['makato'] ?? 0);
 $salio = $jumla - $makato;
 
 $today = date('Y-m-d');
-$payoutBtn = (!empty($currentUser['payout_date']) && $today >= $currentUser['payout_date']);
 
 $depositMessage = '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deposit_submit'])) {
@@ -109,14 +108,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deposit_submit'])) {
     </form>
   </div>
 
-  <?php if ($payoutBtn): ?>
-    <form class="card" action="payout.php" method="POST">
-      <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
-      <button type="submit" class="btn btn-primary">Omba Payout</button>
-    </form>
-  <?php else: ?>
-    <div class="card"><p class="note">Hutaweza kutoa mpaka tarehe ya payout ifike.</p></div>
-  <?php endif; ?>
+  <form class="card" action="payout.php" method="POST">
+    <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
+    <button type="submit" class="btn btn-primary">Omba Payout</button>
+  </form>
 
   <form class="card" action="cancel.php" method="POST" onsubmit="return confirm('Una uhakika unataka kuvunja mkataba? Utakatwa <?= (int)(compute_early_withdrawal_fee()*100) ?>%');">
     <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">

@@ -11,7 +11,7 @@ foreach (($data['users'] ?? []) as $u) {
   $usersById[$u['id']] = $u;
 }
 
-$items = array_values(array_filter($data['payouts'] ?? [], function($p){ return ($p['kind'] ?? 'deposit') === 'deposit'; }));
+$items = array_values(array_filter($data['payouts'] ?? [], function($p){ return in_array(($p['kind'] ?? 'deposit'), ['deposit','payout'], true); }));
 ?>
 <!DOCTYPE html>
 <html lang="sw">
@@ -40,15 +40,26 @@ $items = array_values(array_filter($data['payouts'] ?? [], function($p){ return 
     <?php else: ?>
       <?php foreach ($items as $p): ?>
         <div class="card" style="margin: 10px 0;">
-          <p><strong>User:</strong> <?= htmlspecialchars($usersById[$p['user_id']]['jina'] ?? $p['user_id']) ?> | <strong>Kiasi:</strong> <?= number_format((float)$p['amount']) ?> | <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?></p>
-          <p><strong>Transaction:</strong> <?= htmlspecialchars($p['transaction_no']) ?> | <a target="_blank" href="/<?= htmlspecialchars($p['screenshot']) ?>">Screenshot</a></p>
-          <form method="POST" action="/admin/update.php" style="display:inline;">
-            <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
-            <input type="hidden" name="id" value="<?= htmlspecialchars($p['id'] ?? '') ?>">
-            <button class="btn btn-primary" name="action" value="approve">Kubali</button>
-            <button class="btn btn-danger" name="action" value="reject" onclick="return confirm('Kukataa muamala huu?')">Kataa</button>
-            <button class="btn" name="action" value="delete" onclick="return confirm('Futa kabisa muamala huu?')">Futa</button>
-          </form>
+          <?php if (($p['kind'] ?? 'deposit') === 'deposit'): ?>
+            <p><strong>User:</strong> <?= htmlspecialchars($usersById[$p['user_id']]['jina'] ?? $p['user_id']) ?> | <strong>Kiasi:</strong> <?= number_format((float)$p['amount']) ?> | <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?></p>
+            <p><strong>Transaction:</strong> <?= htmlspecialchars($p['transaction_no']) ?> | <a target="_blank" href="/<?= htmlspecialchars($p['screenshot']) ?>">Screenshot</a></p>
+            <form method="POST" action="/admin/update.php" style="display:inline;">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
+              <input type="hidden" name="id" value="<?= htmlspecialchars($p['id'] ?? '') ?>">
+              <button class="btn btn-primary" name="action" value="approve">Kubali</button>
+              <button class="btn btn-danger" name="action" value="reject" onclick="return confirm('Kukataa muamala huu?')">Kataa</button>
+              <button class="btn" name="action" value="delete" onclick="return confirm('Futa kabisa muamala huu?')">Futa</button>
+            </form>
+          <?php else: ?>
+            <p><strong>Payout:</strong> <?= htmlspecialchars($usersById[$p['user_id']]['jina'] ?? $p['payer_name'] ?? $p['user_id']) ?> | <strong>Net:</strong> <?= number_format((float)($p['net_amount'] ?? 0), 2) ?> | <strong>Status:</strong> <?= htmlspecialchars($p['status']) ?></p>
+            <form method="POST" action="/admin/update_payout.php" style="display:inline;">
+              <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
+              <input type="hidden" name="id" value="<?= htmlspecialchars($p['id'] ?? '') ?>">
+              <button class="btn btn-primary" name="action" value="approve">Lipa</button>
+              <button class="btn btn-danger" name="action" value="reject" onclick="return confirm('Kataa ombi la payout?')">Kataa</button>
+              <button class="btn" name="action" value="delete" onclick="return confirm('Futa ombi hili?')">Futa</button>
+            </form>
+          <?php endif; ?>
         </div>
       <?php endforeach; ?>
     <?php endif; ?>
