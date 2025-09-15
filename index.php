@@ -27,6 +27,9 @@ $currentUser = current_user($data);
     <?php if ($loggedIn): ?>
       <span class="welcome">Karibu, <?= htmlspecialchars($currentUser['jina'] ?? 'Mteja') ?></span>
       <a href="dashboard.php" class="btn">Dashboard</a>
+      <?php if ($currentUser && is_admin($currentUser)): ?>
+        <a href="/admin/dashboard.php" class="btn">Admin</a>
+      <?php endif; ?>
       <a href="logout.php" class="btn">Logout</a>
     <?php else: ?>
       <a href="login.php" class="btn">Login</a>
