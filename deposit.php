@@ -10,8 +10,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } else {
         $amount = (float)($_POST['amount'] ?? 0);
         try {
-            [$user, $deposit] = gp_add_deposit((int)$user['id'], $amount);
-            $message = 'Umefanikiwa kuweka KES ' . number_format($deposit['amount'],2);
+            if (!isset($_FILES['screenshot'])) {
+                throw new RuntimeException('Weka picha ya muamala.');
+            }
+            $dep = gp_add_deposit_request((int)$user['id'], $amount, $_FILES['screenshot']);
+            $message = 'Ombi la amana limetumwa (KES ' . number_format((float)$dep['amount'],2) . '). Subiri uhakiki wa admin.';
         } catch (Throwable $e) {
             $error = $e->getMessage();
         }
@@ -32,11 +35,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Weka fedha</h2>
         <?php if ($message): ?><p style="color:#86efac"><?= gp_sanitize($message) ?></p><?php endif; ?>
         <?php if ($error): ?><p style="color:#fca5a5"><?= gp_sanitize($error) ?></p><?php endif; ?>
-        <form method="post" class="grid">
+        <form method="post" class="grid" enctype="multipart/form-data">
           <input type="hidden" name="csrf" value="<?= gp_csrf_token() ?>">
           <div>
             <label>Kiasi (KES)</label>
             <input required name="amount" type="number" min="1" step="0.01" placeholder="Mf. 5000">
+          </div>
+          <div>
+            <label>Picha ya muamala (JPG/PNG/WEBP)</label>
+            <input required name="screenshot" type="file" accept="image/*">
           </div>
           <div class="row">
             <button class="btn primary" type="submit">Thibitisha Amana</button>

@@ -60,12 +60,17 @@ $withdrawals = gp_user_withdrawals($user['id']);
         <section class="card">
           <h3>Deposits</h3>
           <table>
-            <thead><tr><th>Tarehe</th><th>Kiasi</th></tr></thead>
+            <thead><tr><th>Tarehe</th><th>Kiasi</th><th>Status</th><th>Picha</th></tr></thead>
             <tbody>
               <?php foreach ($deposits as $d): ?>
-                <tr><td><?= gp_sanitize($d['date']) ?></td><td>KES <?= number_format((float)$d['amount'], 2) ?></td></tr>
+                <tr>
+                  <td><?= gp_sanitize($d['date']) ?></td>
+                  <td>KES <?= number_format((float)$d['amount'], 2) ?></td>
+                  <td><?= gp_sanitize($d['status'] ?? 'done') ?></td>
+                  <td><?php if (!empty($d['screenshot'])): ?><a target="_blank" href="/<?= gp_sanitize($d['screenshot']) ?>">Ona</a><?php endif; ?></td>
+                </tr>
               <?php endforeach; ?>
-              <?php if (empty($deposits)): ?><tr><td colspan="2" class="muted">Hakuna data</td></tr><?php endif; ?>
+              <?php if (empty($deposits)): ?><tr><td colspan="4" class="muted">Hakuna data</td></tr><?php endif; ?>
             </tbody>
           </table>
         </section>

@@ -42,16 +42,28 @@ $data = gp_load_data();
         <section class="card">
           <h3>Deposits</h3>
           <table>
-            <thead><tr><th>Tarehe</th><th>Jina</th><th>Kiasi</th></tr></thead>
+            <thead><tr><th>Tarehe</th><th>Jina</th><th>Kiasi</th><th>Status</th><th>Picha</th><th>Vitendo</th></tr></thead>
             <tbody>
               <?php foreach ($data['deposits'] as $d): ?>
                 <tr>
                   <td><?= gp_sanitize($d['date']) ?></td>
                   <td><?= gp_sanitize($d['jina']) ?></td>
                   <td>KES <?= number_format((float)$d['amount'],2) ?></td>
+                  <td><?= gp_sanitize($d['status'] ?? 'done') ?></td>
+                  <td><?php if (!empty($d['screenshot'])): ?><a target="_blank" href="/<?= gp_sanitize($d['screenshot']) ?>">Ona</a><?php endif; ?></td>
+                  <td>
+                    <?php if (($d['status'] ?? 'done') === 'pending'): ?>
+                      <form method="post" action="/admin/update_deposit.php" class="row" style="gap:6px">
+                        <input type="hidden" name="csrf" value="<?= gp_csrf_token() ?>">
+                        <input type="hidden" name="id" value="<?= gp_sanitize($d['id']) ?>">
+                        <button class="btn" name="action" value="approve">Kubali</button>
+                        <button class="btn danger" name="action" value="reject">Kataa</button>
+                      </form>
+                    <?php endif; ?>
+                  </td>
                 </tr>
               <?php endforeach; ?>
-              <?php if (empty($data['deposits'])): ?><tr><td colspan="3" class="muted">Hakuna data</td></tr><?php endif; ?>
+              <?php if (empty($data['deposits'])): ?><tr><td colspan="6" class="muted">Hakuna data</td></tr><?php endif; ?>
             </tbody>
           </table>
         </section>

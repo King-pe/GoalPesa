@@ -290,4 +290,94 @@ function gp_user_withdrawals(int $userId): array {
     return array_values(array_filter($data['withdrawals'], static fn($w) => (int)$w['user_id'] === $userId));
 }
 
+function gp_generate_id(): string {
+    return bin2hex(random_bytes(8));
+}
+
+function gp_store_upload(array $file): string {
+    if (!isset($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('Picha haijapakiwa.');
+    }
+    $allowed = ['image/jpeg' => 'jpg', 'image/png' => 'png', 'image/webp' => 'webp'];
+    $finfo = finfo_open(FILEINFO_MIME_TYPE);
+    $mime = finfo_file($finfo, $file['tmp_name']);
+    finfo_close($finfo);
+    if (!isset($allowed[$mime])) {
+        throw new RuntimeException('Aina ya picha si sahihi. Ruhusa: JPG, PNG, WEBP.');
+    }
+    $ext = $allowed[$mime];
+    $dir = __DIR__ . '/../uploads';
+    if (!is_dir($dir)) {
+        mkdir($dir, 0775, true);
+    }
+    $name = date('Ymd_His') . '_' . gp_generate_id() . '.' . $ext;
+    $dest = $dir . '/' . $name;
+    if (!move_uploaded_file($file['tmp_name'], $dest)) {
+        throw new RuntimeException('Imeshindwa kuhifadhi picha.');
+    }
+    return 'uploads/' . $name;
+}
+
+function gp_add_deposit_request(int $userId, float $amount, array $file): array {
+    if ($amount <= 0) {
+        throw new InvalidArgumentException('Kiasi lazima kiwe zaidi ya sifuri.');
+    }
+    $data = gp_load_data();
+    $key = (string)$userId;
+    if (!isset($data['users'][$key])) {
+        throw new RuntimeException('Mtumiaji hajapatikana.');
+    }
+    $user = $data['users'][$key];
+    $screenshot = gp_store_upload($file);
+    $deposit = [
+        'id' => gp_generate_id(),
+        'user_id' => $userId,
+        'jina' => $user['jina'],
+        'amount' => $amount,
+        'date' => date('Y-m-d H:i:s'),
+        'status' => 'pending',
+        'screenshot' => $screenshot
+    ];
+    $data['deposits'][] = $deposit;
+    gp_save_data($data);
+    return $deposit;
+}
+
+function gp_admin_process_deposit(string $depositId, string $action): array {
+    $data = gp_load_data();
+    $foundIndex = null;
+    foreach ($data['deposits'] as $i => $d) {
+        if (($d['id'] ?? '') === $depositId) { $foundIndex = $i; break; }
+    }
+    if ($foundIndex === null) {
+        throw new RuntimeException('Deposit haikupatikana.');
+    }
+    $deposit = $data['deposits'][$foundIndex];
+    if (($deposit['status'] ?? 'pending') !== 'pending') {
+        throw new RuntimeException('Tayari imeshashughulikiwa.');
+    }
+    if ($action === 'approve') {
+        $deposit['status'] = 'approved';
+        $data['deposits'][$foundIndex] = $deposit;
+        // credit user balance
+        $key = (string)$deposit['user_id'];
+        if (!isset($data['users'][$key])) {
+            throw new RuntimeException('Mtumiaji hajapatikana.');
+        }
+        $user = $data['users'][$key];
+        $user['balance'] = (float)($user['balance'] ?? 0) + (float)$deposit['amount'];
+        if ((float)($user['initialDeposit'] ?? 0) <= 0) {
+            $user['initialDeposit'] = (float)$deposit['amount'];
+        }
+        $data['users'][$key] = $user;
+    } elseif ($action === 'reject') {
+        $deposit['status'] = 'rejected';
+        $data['deposits'][$foundIndex] = $deposit;
+    } else {
+        throw new InvalidArgumentException('Hatua batili.');
+    }
+    gp_save_data($data);
+    return $deposit;
+}
+
 ?>
