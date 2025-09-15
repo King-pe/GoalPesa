@@ -1,3 +1,44 @@
+:root{
+  --bg:#0f172a; --card:#111827; --muted:#94a3b8; --text:#e5e7eb; --primary:#22c55e; --accent:#38bdf8; --danger:#ef4444;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Cantarell,Noto Sans,sans-serif}
+a{color:var(--accent);text-decoration:none}
+header{position:sticky;top:0;background:rgba(15,23,42,.6);backdrop-filter:blur(8px);border-bottom:1px solid #1f2937;z-index:10}
+.container{width:100%;max-width:1100px;margin:0 auto;padding:0 16px}
+.nav{display:flex;align-items:center;justify-content:space-between;padding:14px 0}
+.menu{display:flex;align-items:center;gap:10px}
+.hamburger{display:none;width:38px;height:38px;border:1px solid #1f2937;border-radius:10px;background:#0b1220;color:#e5e7eb;align-items:center;justify-content:center}
+.dropdown{position:relative}
+.dropdown-menu{position:absolute;right:0;top:calc(100% + 8px);background:#0b1220;border:1px solid #1f2937;border-radius:12px;min-width:180px;display:none;box-shadow:0 10px 30px rgba(0,0,0,.35);padding:8px}
+.dropdown-menu a{display:block;padding:10px 12px;border-radius:8px;color:#e5e7eb}
+.dropdown-menu a:hover{background:#101826}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700}
+.pill{padding:.25rem .6rem;border:1px solid #1f2937;border-radius:999px;background:#0b1220;color:#94a3b8;font-size:.75rem}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:.6rem .9rem;border:1px solid #1f2937;border-radius:10px;background:#0b1220;color:#e5e7eb;cursor:pointer}
+.btn.primary{background:linear-gradient(135deg,#22c55e,#16a34a);border-color:#065f46}
+.btn.danger{background:linear-gradient(135deg,#ef4444,#dc2626);border-color:#7f1d1d}
+.grid{display:grid;gap:16px}
+.hero{display:grid;grid-template-columns:1.2fr .8fr;gap:24px;align-items:center;padding:40px 0}
+.card{background:linear-gradient(180deg,#0b1220,#0a0f1a);border:1px solid #1f2937;border-radius:16px;padding:20px;box-shadow:0 20px 60px rgba(0,0,0,.35)}
+.muted{color:var(--muted)}
+footer{border-top:1px solid #1f2937;margin-top:40px}
+.footer{display:flex;justify-content:space-between;align-items:center;padding:18px 0;color:#94a3b8}
+.slider{position:relative;overflow:hidden;border-radius:16px}
+.slides{display:flex;transition:transform .6s cubic-bezier(.4,0,.2,1)}
+.slide{min-width:100%;height:260px;display:grid;place-items:center;background:radial-gradient(80% 120% at 10% 10%,#0ea5e9 0%,#0b1220 50%),radial-gradient(80% 120% at 90% 90%,#22c55e 0%,#0b1220 50%)}
+.slide h2{font-size:2rem;margin:0}
+.dots{display:flex;gap:8px;position:absolute;bottom:12px;left:0;right:0;justify-content:center}
+.dot{width:8px;height:8px;border-radius:999px;background:#1f2937;border:1px solid #334155}
+.dot.active{background:#22c55e}
+.row{display:flex;gap:12px;flex-wrap:wrap}
+label{display:block;margin:8px 0 6px;color:#a1a1aa}
+input,select{width:100%;padding:.7rem .8rem;border-radius:10px;border:1px solid #1f2937;background:#0b1220;color:#e5e7eb}
+table{width:100%;border-collapse:separate;border-spacing:0 8px}
+th,td{text-align:left;padding:10px 12px}
+tbody tr{background:#0b1220;border:1px solid #1f2937}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width: 900px){.hero{grid-template-columns:1fr}.two-col{grid-template-columns:1fr}}
 /* Minimal styles */
 body { font-family: system-ui, Arial, sans-serif; margin: 0; color: #2f3640; }
 .navbar { display:flex; justify-content:space-between; align-items:center; padding:10px 16px; background:#f5f6fa; border-bottom:1px solid #dcdde1; }
@@ -26,3 +67,27 @@ nav .btn, .btn { display:inline-block; padding:8px 12px; margin-left:8px; backgr
 label { display:block; margin-top:10px; margin-bottom:6px; }
 input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="file"] { width:100%; padding:10px; border:1px solid #dcdde1; border-radius:6px; }
 .note { color:#273c75; background:#f0f6ff; border:1px solid #cbdfff; padding:8px; border-radius:6px; }
+
+/* Mobile responsiveness tweaks */
+@media (max-width: 768px){
+  .container{padding:0 12px}
+  .nav{padding:10px 0}
+  .brand img{height:28px}
+  .menu-desktop{display:none}
+  .hamburger{display:flex}
+  .hero{grid-template-columns:1fr !important;gap:12px;padding:20px 0}
+  .grid{grid-template-columns:1fr !important}
+  .card{padding:14px;border-radius:12px}
+  .slide{height:180px}
+  .slide h2{font-size:1.25rem}
+  .btn{width:100%;justify-content:center;padding:.7rem .9rem}
+  .row{gap:10px}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .footer{flex-direction:column;gap:8px;text-align:center}
+}
+
+@media (max-width: 480px){
+  .slide{height:150px}
+  .pill{display:none}
+  .brand span{font-size:1rem}
+}
