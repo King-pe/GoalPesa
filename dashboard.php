@@ -94,6 +94,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deposit_submit'])) {
     <?php if($depositMessage): ?>
       <p class="note"><?= htmlspecialchars($depositMessage) ?></p>
     <?php endif; ?>
+    <div class="note">
+      <p><strong>Maelekezo ya Malipo:</strong></p>
+      <ul>
+        <li>Tuma kupitia <strong>Mpesa</strong> au <strong>Tigopesa</strong>.</li>
+        <li>Kiasi cha chini: <strong>5000 TZS</strong>.</li>
+        <li>Hifadhi <strong>Screenshot</strong> ya uthibitisho na ujaze <strong>Transaction No</strong>.</li>
+        <li>Mfano wa Transaction No: <code>CI250820.1131.T92433</code>.</li>
+      </ul>
+    </div>
     <form action="" method="POST" enctype="multipart/form-data">
       <input type="hidden" name="csrf" value="<?= htmlspecialchars(csrf_token()) ?>">
       <label>Kiasi cha Pesa:</label>
