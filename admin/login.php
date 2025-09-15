@@ -9,7 +9,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $u = trim($_POST['username'] ?? '');
         $p = (string)($_POST['password'] ?? '');
         if (gp_admin_login($u, $p)) {
-            header('Location: /admin/');
+            header('Location: /admin/dashboard.php');
             exit;
         }
         $error = 'Taarifa si sahihi.';
