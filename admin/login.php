@@ -6,7 +6,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (!gp_verify_csrf($_POST['csrf'] ?? '')) {
         $error = 'CSRF kosa, jaribu tena.';
     } else {
-        $u = trim($_POST['username'] ?? '');
+        $u = trim($_POST['email'] ?? '');
         $p = (string)($_POST['password'] ?? '');
         if (gp_admin_login($u, $p)) {
             header('Location: /admin/dashboard.php');
@@ -32,8 +32,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="post" class="grid">
           <input type="hidden" name="csrf" value="<?= gp_csrf_token() ?>">
           <div>
-            <label>Username</label>
-            <input required name="username" placeholder="admin">
+            <label>Barua pepe</label>
+            <input required name="email" type="email" placeholder="admin@goalpesa.local">
           </div>
           <div>
             <label>Password</label>
