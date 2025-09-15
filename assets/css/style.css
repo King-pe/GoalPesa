@@ -61,3 +61,25 @@ nav .btn, .btn { display:inline-block; padding:8px 12px; margin-left:8px; backgr
 label { display:block; margin-top:10px; margin-bottom:6px; }
 input[type="text"], input[type="email"], input[type="password"], input[type="number"], input[type="file"] { width:100%; padding:10px; border:1px solid #dcdde1; border-radius:6px; }
 .note { color:#273c75; background:#f0f6ff; border:1px solid #cbdfff; padding:8px; border-radius:6px; }
+
+/* Mobile responsiveness tweaks */
+@media (max-width: 768px){
+  .container{padding:0 12px}
+  .nav{padding:10px 0}
+  .brand img{height:28px}
+  .hero{grid-template-columns:1fr !important;gap:12px;padding:20px 0}
+  .grid{grid-template-columns:1fr !important}
+  .card{padding:14px;border-radius:12px}
+  .slide{height:180px}
+  .slide h2{font-size:1.25rem}
+  .btn{width:100%;justify-content:center;padding:.7rem .9rem}
+  .row{gap:10px}
+  table{display:block;overflow-x:auto;white-space:nowrap}
+  .footer{flex-direction:column;gap:8px;text-align:center}
+}
+
+@media (max-width: 480px){
+  .slide{height:150px}
+  .pill{display:none}
+  .brand span{font-size:1rem}
+}
