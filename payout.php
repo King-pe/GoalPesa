@@ -12,15 +12,13 @@ if (!$user) { header('Location: dashboard.php'); exit; }
 if (!csrf_validate($_POST['csrf'] ?? '')) { header('Location: dashboard.php'); exit; }
 
 $today = date('Y-m-d');
-if (empty($user['payout_date']) || $today < $user['payout_date']) {
-    header('Location: dashboard.php');
-    exit;
-}
+// Allow payout anytime per new requirement
 
 $amount = (float)($user['jumla_uwekezaji'] ?? 0);
 $months = (int)($user['payout_period'] ?? 0);
 $feePct = compute_fee_percentage($months, $amount);
 $fee = round($amount * $feePct, 2);
+$net = max(0, round($amount - $fee, 2));
 
 $data['payouts'][] = [
     'id' => generate_id(),
@@ -28,15 +26,13 @@ $data['payouts'][] = [
     'user_id' => $user['id'],
     'amount' => $amount,
     'fee' => $fee,
-    'status' => 'processed',
+    'net_amount' => $net,
+    'payer_name' => $user['jina'] ?? '',
+    'status' => 'pending',
     'date' => date('Y-m-d H:i:s')
 ];
 
-// reset user balance after payout
-$user['jumla_uwekezaji'] = 0;
-$user['makato'] = 0;
-$user['payout_date'] = date('Y-m-d', strtotime('+' . max(1, $months) . ' months'));
-update_user($data, $user);
+// Do not reset balance yet; wait for admin approval
 write_json($data);
 
 header('Location: dashboard.php');
